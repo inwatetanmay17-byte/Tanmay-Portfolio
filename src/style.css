@@ -11,6 +11,12 @@
 .preview img{position:static;inset:auto;display:block;width:100%;height:100%;object-fit:contain;object-position:center;background:#0b111a}
 .preview small{z-index:1;pointer-events:none;text-align:left}
 .preview-image-link:focus-visible{outline:2px solid #83d7d0;outline-offset:-3px}
+.swarm-canvas{position:absolute;inset:0;z-index:3;width:100%;height:100%;pointer-events:none}
+.visual .core{position:relative;z-index:4}
+.visual .chip,.visual .fig{z-index:5}
+.swarm-credit{position:absolute;z-index:5;left:50%;bottom:8px;transform:translateX(-50%);color:#8a98ad;font:8px 'DM Mono';letter-spacing:0;white-space:nowrap;transition:color .2s ease}
+.swarm-credit:hover{color:#83d7d0}
+@media(max-width:560px){.swarm-credit{font-size:7px;bottom:5px}}
 @media(max-width:800px){.preview{aspect-ratio:16 / 10;min-height:0}.preview img{object-fit:contain}}
 @media(max-width:560px){
   .nav{position:relative;z-index:20}

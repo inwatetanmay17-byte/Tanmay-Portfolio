@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createRoot} from 'react-dom/client';
 import {ArrowUpRight,ArrowDownRight,Github,Wrench,BarChart3,Database,Cpu,Factory,Activity,Code2,Mail,MapPin} from 'lucide-react';
 import './style.css';
@@ -8,6 +8,79 @@ const email='inwatetanmay17@gmail.com';
 function App(){
 const [menuOpen,setMenuOpen]=useState(false);
 const closeMenu=()=>setMenuOpen(false);
+useEffect(()=>{
+const visual=document.querySelector('.visual');
+if(!visual)return;
+const canvas=document.createElement('canvas');
+canvas.className='swarm-canvas';
+canvas.setAttribute('aria-hidden','true');
+const context=canvas.getContext('2d');
+if(!context)return;
+const attribution=document.createElement('a');
+attribution.className='swarm-credit';
+attribution.href='https://github.com/DhvanilPatel/swarm-cursors/tree/main/swarm-rebuild';
+attribution.target='_blank';
+attribution.rel='noreferrer';
+attribution.textContent='CURSOR SWARM INSPIRED BY SWARM-REBUILD ↗';
+visual.append(canvas,attribution);
+const colors=['#F24E1E','#1ABCFE','#0ACF83','#FF7262','#FFC700','#0D99FF','#E8467C','#00B5CE'];
+const cursors=colors.map((color,index)=>({color,phase:index*Math.PI*2/colors.length}));
+const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+let frame=0;
+let width=0;
+let height=0;
+const resize=()=>{
+const bounds=canvas.getBoundingClientRect();
+const pixelRatio=Math.min(window.devicePixelRatio||1,2);
+width=bounds.width;
+height=bounds.height;
+canvas.width=Math.round(width*pixelRatio);
+canvas.height=Math.round(height*pixelRatio);
+context.setTransform(pixelRatio,0,0,pixelRatio,0,0);
+};
+const draw=(time)=>{
+context.clearRect(0,0,width,height);
+cursors.forEach(({color,phase},index)=>{
+const angle=phase+time*(0.00022+(index%3)*0.000035);
+const radiusX=Math.min(width*0.39,178)+Math.sin(time*0.0007+index)*9;
+const radiusY=Math.min(height*0.39,158)+Math.cos(time*0.0006+index)*8;
+context.save();
+context.translate(width/2+Math.cos(angle)*radiusX,height/2+Math.sin(angle)*radiusY);
+context.rotate(angle+Math.PI/2);
+context.shadowColor='#0009';
+context.shadowBlur=5;
+context.shadowOffsetY=2;
+context.beginPath();
+context.moveTo(0,0);
+context.lineTo(3,19);
+context.lineTo(7,13);
+context.lineTo(12,18);
+context.lineTo(15,15);
+context.lineTo(10,10);
+context.lineTo(17,8);
+context.closePath();
+context.fillStyle=color;
+context.fill();
+context.lineWidth=1.5;
+context.strokeStyle='#fff';
+context.stroke();
+context.restore();
+});
+};
+const animate=(time)=>{
+draw(time);
+if(!reducedMotion.matches)frame=requestAnimationFrame(animate);
+};
+resize();
+frame=requestAnimationFrame(animate);
+window.addEventListener('resize',resize);
+return()=>{
+cancelAnimationFrame(frame);
+window.removeEventListener('resize',resize);
+canvas.remove();
+attribution.remove();
+};
+},[]);
 return <div>
 <nav className="nav wrap"><a className="brand" href="#home" onClick={closeMenu}>T. <span>TANMAY<span className="cyan">/</span>PORTFOLIO</span></a><div className={`links ${menuOpen?'mobile-open':''}`}><a href="#about" onClick={closeMenu}>About</a><a href="#skills" onClick={closeMenu}>Expertise</a><a href="#projects" onClick={closeMenu}>Projects</a><a href="#contact" onClick={closeMenu}>Contact</a></div><div className="nav-actions"><a className="navbtn" href={github} target="_blank" rel="noreferrer">GitHub ↗</a><button className="menu-toggle" type="button" aria-label={menuOpen?'Close navigation menu':'Open navigation menu'} aria-expanded={menuOpen} onClick={()=>setMenuOpen(!menuOpen)}>{menuOpen?'✕':'☰'}</button></div></nav>
 <header className="hero wrap" id="home"><div><div className="eyebrow"><i/> ENGINEERING • ANALYTICS • BUILDING</div><h1>Turning engineering<br/><span>questions into</span><br/><b>clear insights.</b></h1><p className="lead">I'm Tanmay — <strong>Mechanical Engineer | Data Analytics Enthusiast.</strong> Interested in the intersection of engineering systems, manufacturing, and data-driven problem solving.</p><div className="actions"><a className="primary" href="#projects">Explore projects <ArrowDownRight size={16}/></a><a className="secondary" href={repo} target="_blank"><Github size={16}/> View GitHub</a></div><div className="meta">BASED IN INDIA <i/> OPEN TO ENGINEERING OPPORTUNITIES</div></div><div className="visual"><div className="orbit"></div><div className="core"><small>ENGINEERING / 001　 <span>● LIVE</span></small><Factory size={62}/><h2>SYSTEMS<br/><em>THINKING.</em></h2><small>MECHANICAL　×　DATA</small></div><label className="chip one">◈ ANALYSE</label><label className="chip two">⌘ ENGINEER</label><small className="fig">FIG 01 — APPROACH</small></div><div className="scroll">SCROLL TO EXPLORE <i/> 01 / 04</div></header>
